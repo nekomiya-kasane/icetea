@@ -1,17 +1,16 @@
-#include <gtest/gtest.h>
+#include "icetea/icetea.h"
 
+#include <gtest/gtest.h>
 #include <string>
 #include <string_view>
 #include <vector>
-
-#include "icetea/icetea.h"
 
 using namespace icetea;
 
 // ── version() ────────────────────────────────────────────────────────────
 
 TEST(IceteaVersion, ReturnsNonNull) {
-    const char* v = icetea::version();
+    const char *v = icetea::version();
     ASSERT_NE(v, nullptr);
     EXPECT_GT(std::string_view(v).size(), 0u);
 }
@@ -326,9 +325,8 @@ TEST(Icu4xBridge, FormatReltimeUnits) {
     if (!r.has_value()) {
         GTEST_SKIP() << "ICU4X data not available";
     }
-    for (auto unit : {reltime_unit::second, reltime_unit::minute, reltime_unit::hour,
-                      reltime_unit::day, reltime_unit::week, reltime_unit::month,
-                      reltime_unit::year}) {
+    for (auto unit : {reltime_unit::second, reltime_unit::minute, reltime_unit::hour, reltime_unit::day,
+                      reltime_unit::week, reltime_unit::month, reltime_unit::year}) {
         std::string out;
         bridge.format_reltime(out, -2.0, unit);
         EXPECT_FALSE(out.empty()) << "Unit " << static_cast<int>(unit);
@@ -340,13 +338,13 @@ TEST(Icu4xBridge, FormatReltimeUnits) {
 // ═══════════════════════════════════════════════════════════════════════════
 
 // Helper: create an eager bridge for a locale, skip test if unavailable.
-#define BRIDGE_OR_SKIP(var, loc)                                       \
-    icu4x_bridge var;                                                  \
-    do {                                                               \
-        auto _r = var.set_locale(loc, false);                          \
-        if (!_r.has_value()) {                                         \
-            GTEST_SKIP() << "ICU4X data not available for '" loc "'";  \
-        }                                                              \
+#define BRIDGE_OR_SKIP(var, loc)                                                                                       \
+    icu4x_bridge var;                                                                                                  \
+    do {                                                                                                               \
+        auto _r = var.set_locale(loc, false);                                                                          \
+        if (!_r.has_value()) {                                                                                         \
+            GTEST_SKIP() << "ICU4X data not available for '" loc "'";                                                  \
+        }                                                                                                              \
     } while (false)
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -641,7 +639,7 @@ TEST(MultiLocale, FormatDateArabic) {
 
 TEST(MultiLocale, FormatDateAllStyles) {
     // Verify all 3 date styles across multiple locales
-    for (const char* loc : {"en", "de", "fr", "ja", "zh", "ru", "ar", "pl", "he", "tr"}) {
+    for (const char *loc : {"en", "de", "fr", "ja", "zh", "ru", "ar", "pl", "he", "tr"}) {
         icu4x_bridge bridge;
         auto r = bridge.set_locale(loc, false);
         if (!r.has_value()) continue;
@@ -649,8 +647,7 @@ TEST(MultiLocale, FormatDateAllStyles) {
         for (auto style : {date_style::short_fmt, date_style::medium_fmt, date_style::long_fmt}) {
             std::string out;
             bridge.format_date(out, 2025, 6, 15, style);
-            EXPECT_FALSE(out.empty())
-                << "Locale=" << loc << " style=" << static_cast<int>(style);
+            EXPECT_FALSE(out.empty()) << "Locale=" << loc << " style=" << static_cast<int>(style);
         }
     }
 }
@@ -677,7 +674,7 @@ TEST(MultiLocale, FormatTimeJapanese) {
 }
 
 TEST(MultiLocale, FormatTimeAllLocales) {
-    for (const char* loc : {"en", "de", "fr", "ja", "zh", "ru", "ar", "pl", "he", "tr"}) {
+    for (const char *loc : {"en", "de", "fr", "ja", "zh", "ru", "ar", "pl", "he", "tr"}) {
         icu4x_bridge bridge;
         auto r = bridge.set_locale(loc, false);
         if (!r.has_value()) continue;
@@ -690,7 +687,7 @@ TEST(MultiLocale, FormatTimeAllLocales) {
 
 TEST(MultiLocale, FormatTimeMidnight) {
     // Midnight (00:00:00) may display as "12:00 AM" (en) or "0:00" (de) etc.
-    for (const char* loc : {"en", "de", "ja", "ar"}) {
+    for (const char *loc : {"en", "de", "ja", "ar"}) {
         icu4x_bridge bridge;
         auto r = bridge.set_locale(loc, false);
         if (!r.has_value()) continue;
@@ -748,7 +745,7 @@ TEST(MultiLocale, FormatListChinese) {
 
 TEST(MultiLocale, FormatListDisjunction) {
     // Test disjunction (or) across locales
-    for (const char* loc : {"en", "de", "fr", "ja", "zh", "ru"}) {
+    for (const char *loc : {"en", "de", "fr", "ja", "zh", "ru"}) {
         icu4x_bridge bridge;
         auto r = bridge.set_locale(loc, false);
         if (!r.has_value()) continue;
@@ -763,7 +760,7 @@ TEST(MultiLocale, FormatListDisjunction) {
 
 TEST(MultiLocale, FormatListUnit) {
     // Test unit list type across locales
-    for (const char* loc : {"en", "de", "fr", "ja"}) {
+    for (const char *loc : {"en", "de", "fr", "ja"}) {
         icu4x_bridge bridge;
         auto r = bridge.set_locale(loc, false);
         if (!r.has_value()) continue;
@@ -777,7 +774,7 @@ TEST(MultiLocale, FormatListUnit) {
 
 TEST(MultiLocale, FormatListSingleItem) {
     // Single-item list should just return the item across all locales
-    for (const char* loc : {"en", "de", "fr", "ja", "zh", "ru", "ar"}) {
+    for (const char *loc : {"en", "de", "fr", "ja", "zh", "ru", "ar"}) {
         icu4x_bridge bridge;
         auto r = bridge.set_locale(loc, false);
         if (!r.has_value()) continue;
@@ -785,14 +782,13 @@ TEST(MultiLocale, FormatListSingleItem) {
         std::string out;
         std::vector<std::string_view> items = {"solo"};
         bridge.format_list(out, items, list_type::conjunction);
-        EXPECT_NE(out.find("solo"), std::string::npos)
-            << "Single-item list for locale=" << loc << " out=" << out;
+        EXPECT_NE(out.find("solo"), std::string::npos) << "Single-item list for locale=" << loc << " out=" << out;
     }
 }
 
 TEST(MultiLocale, FormatListTwoItems) {
     // Two-item list — usually "A and B" without Oxford comma
-    for (const char* loc : {"en", "de", "fr", "ru"}) {
+    for (const char *loc : {"en", "de", "fr", "ru"}) {
         icu4x_bridge bridge;
         auto r = bridge.set_locale(loc, false);
         if (!r.has_value()) continue;
@@ -859,15 +855,16 @@ TEST(MultiLocale, FormatCurrencyArabic) {
 
 TEST(MultiLocale, FormatCurrencyAllLocales) {
     // Verify no crash across many locale+currency combos
-    struct { const char* loc; const char* cur; double amt; } cases[] = {
-        {"en", "USD", 19.99}, {"en", "GBP", 100.0},
-        {"de", "EUR", 1234.56}, {"fr", "EUR", 49.99},
-        {"ja", "JPY", 1000.0}, {"zh", "CNY", 88.88},
-        {"ru", "RUB", 5000.0}, {"ar", "SAR", 999.99},
-        {"pl", "PLN", 42.50}, {"he", "ILS", 250.0},
-        {"tr", "TRY", 175.25},
+    struct {
+        const char *loc;
+        const char *cur;
+        double amt;
+    } cases[] = {
+        {"en", "USD", 19.99},  {"en", "GBP", 100.0}, {"de", "EUR", 1234.56}, {"fr", "EUR", 49.99},
+        {"ja", "JPY", 1000.0}, {"zh", "CNY", 88.88}, {"ru", "RUB", 5000.0},  {"ar", "SAR", 999.99},
+        {"pl", "PLN", 42.50},  {"he", "ILS", 250.0}, {"tr", "TRY", 175.25},
     };
-    for (auto& c : cases) {
+    for (auto &c : cases) {
         icu4x_bridge bridge;
         auto r = bridge.set_locale(c.loc, false);
         if (!r.has_value()) continue;
@@ -932,11 +929,10 @@ TEST(MultiLocale, FormatReltimeArabic) {
 
 TEST(MultiLocale, FormatReltimeAllUnitsAllLocales) {
     // Exhaustive: every unit × every locale
-    const char* locales[] = {"en", "de", "fr", "ja", "zh", "ru", "ar", "pl", "he", "tr"};
-    reltime_unit units[] = {reltime_unit::second, reltime_unit::minute, reltime_unit::hour,
-                            reltime_unit::day, reltime_unit::week, reltime_unit::month,
-                            reltime_unit::year};
-    for (const char* loc : locales) {
+    const char *locales[] = {"en", "de", "fr", "ja", "zh", "ru", "ar", "pl", "he", "tr"};
+    reltime_unit units[] = {reltime_unit::second, reltime_unit::minute, reltime_unit::hour, reltime_unit::day,
+                            reltime_unit::week,   reltime_unit::month,  reltime_unit::year};
+    for (const char *loc : locales) {
         icu4x_bridge bridge;
         auto r = bridge.set_locale(loc, false);
         if (!r.has_value()) continue;
@@ -945,10 +941,7 @@ TEST(MultiLocale, FormatReltimeAllUnitsAllLocales) {
             for (double val : {-5.0, -1.0, 0.0, 1.0, 5.0}) {
                 std::string out;
                 bridge.format_reltime(out, val, unit);
-                EXPECT_FALSE(out.empty())
-                    << "Locale=" << loc
-                    << " unit=" << static_cast<int>(unit)
-                    << " val=" << val;
+                EXPECT_FALSE(out.empty()) << "Locale=" << loc << " unit=" << static_cast<int>(unit) << " val=" << val;
             }
         }
     }
@@ -1082,14 +1075,13 @@ TEST(EdgeCase, SetLocaleAndSwitch) {
     bridge.format_number(de_out, 1234.5);
 
     // en and de should differ (comma vs period grouping)
-    EXPECT_NE(en_out, de_out)
-        << "en=" << en_out << " de=" << de_out;
+    EXPECT_NE(en_out, de_out) << "en=" << en_out << " de=" << de_out;
 }
 
 TEST(EdgeCase, SetLocaleMultipleTimes) {
     icu4x_bridge bridge;
     // Rapid locale switching should not leak or crash
-    for (const char* loc : {"en", "de", "fr", "ja", "zh", "ru", "ar", "pl", "he", "tr",
+    for (const char *loc : {"en", "de", "fr", "ja", "zh", "ru", "ar", "pl", "he", "tr",
                             "en", "de", "fr", "ja", "zh", "ru", "ar", "pl", "he", "tr"}) {
         auto r = bridge.set_locale(loc, false);
         if (!r.has_value()) continue;
@@ -1280,8 +1272,7 @@ TEST(ErrorHandling, NegativeRelativeTime) {
     bridge.format_reltime(out, -5.0, reltime_unit::day);
     EXPECT_FALSE(out.empty());
     // Should contain "5" or "ago" or similar
-    EXPECT_TRUE(out.find("5") != std::string::npos || out.find("ago") != std::string::npos)
-        << "got: " << out;
+    EXPECT_TRUE(out.find("5") != std::string::npos || out.find("ago") != std::string::npos) << "got: " << out;
 }
 
 TEST(ErrorHandling, PositiveRelativeTime) {
@@ -1290,6 +1281,5 @@ TEST(ErrorHandling, PositiveRelativeTime) {
     bridge.format_reltime(out, 3.0, reltime_unit::hour);
     EXPECT_FALSE(out.empty());
     // Should contain "3" or "in"
-    EXPECT_TRUE(out.find("3") != std::string::npos || out.find("in") != std::string::npos)
-        << "got: " << out;
+    EXPECT_TRUE(out.find("3") != std::string::npos || out.find("in") != std::string::npos) << "got: " << out;
 }

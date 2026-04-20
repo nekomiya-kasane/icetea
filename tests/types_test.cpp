@@ -1,10 +1,9 @@
-#include <gtest/gtest.h>
+#include "icetea/types.h"
 
 #include <cstdint>
 #include <expected>
+#include <gtest/gtest.h>
 #include <string>
-
-#include "icetea/types.h"
 
 using namespace icetea;
 

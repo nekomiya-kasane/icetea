@@ -7,13 +7,13 @@
 /// compiled data directly. Covers case mapping, normalization, character
 /// properties, and text segmentation.
 
+#include "icetea/exports.h"
+#include "icetea/icu4x_capi.h"
+
 #include <cstdint>
 #include <string>
 #include <string_view>
 #include <vector>
-
-#include "icetea/exports.h"
-#include "icetea/icu4x_capi.h"
 
 namespace icetea {
 
@@ -35,8 +35,8 @@ namespace icetea {
 // ── Normalization ────────────────────────────────────────────────────
 
 enum class normalization_form : int {
-    nfc  = ICU4X_NORM_NFC,
-    nfd  = ICU4X_NORM_NFD,
+    nfc = ICU4X_NORM_NFC,
+    nfd = ICU4X_NORM_NFD,
     nfkc = ICU4X_NORM_NFKC,
     nfkd = ICU4X_NORM_NFKD,
 };
@@ -50,12 +50,12 @@ enum class normalization_form : int {
 // ── Character Properties ─────────────────────────────────────────────
 
 enum class unicode_property : int {
-    alphabetic  = ICU4X_PROP_ALPHABETIC,
-    whitespace  = ICU4X_PROP_WHITESPACE,
-    numeric     = ICU4X_PROP_NUMERIC,
-    lowercase   = ICU4X_PROP_LOWERCASE,
-    uppercase   = ICU4X_PROP_UPPERCASE,
-    emoji       = ICU4X_PROP_EMOJI,
+    alphabetic = ICU4X_PROP_ALPHABETIC,
+    whitespace = ICU4X_PROP_WHITESPACE,
+    numeric = ICU4X_PROP_NUMERIC,
+    lowercase = ICU4X_PROP_LOWERCASE,
+    uppercase = ICU4X_PROP_UPPERCASE,
+    emoji = ICU4X_PROP_EMOJI,
     ideographic = ICU4X_PROP_IDEOGRAPHIC,
 };
 
@@ -66,7 +66,7 @@ enum class unicode_property : int {
 
 enum class segmentation_type : int {
     grapheme = ICU4X_SEG_GRAPHEME,
-    word     = ICU4X_SEG_WORD,
+    word = ICU4X_SEG_WORD,
     sentence = ICU4X_SEG_SENTENCE,
 };
 
@@ -76,21 +76,19 @@ enum class segmentation_type : int {
 // ── Collation ────────────────────────────────────────────────────────
 
 enum class collation_strength : int {
-    primary   = ICU4X_COLLATION_PRIMARY,   // base letters (accent+case insensitive)
+    primary = ICU4X_COLLATION_PRIMARY,     // base letters (accent+case insensitive)
     secondary = ICU4X_COLLATION_SECONDARY, // + accents (case insensitive)
-    tertiary  = ICU4X_COLLATION_TERTIARY,  // + case (default)
+    tertiary = ICU4X_COLLATION_TERTIARY,   // + case (default)
 };
 
 /// Compare two UTF-8 strings using locale-aware collation.
 /// Returns -1 (a < b), 0 (a == b), or 1 (a > b).
-[[nodiscard]] ICETEA_API int collation_compare(std::string_view a, std::string_view b,
-                                               std::string_view locale,
+[[nodiscard]] ICETEA_API int collation_compare(std::string_view a, std::string_view b, std::string_view locale,
                                                collation_strength strength = collation_strength::tertiary);
 
 /// Search for needle in haystack using locale-aware collation.
 /// Returns the byte offset of the first match, or -1 if not found.
-[[nodiscard]] ICETEA_API int collation_find(std::string_view haystack, std::string_view needle,
-                                            std::string_view locale,
+[[nodiscard]] ICETEA_API int collation_find(std::string_view haystack, std::string_view needle, std::string_view locale,
                                             collation_strength strength = collation_strength::tertiary);
 
 /// Check if haystack contains needle using locale-aware collation.
@@ -108,7 +106,6 @@ enum class collation_strength : int {
 /// @return Transliterated UTF-8 string, or empty string on error.
 ///
 /// @note Uses ICU4X experimental Transliterator — unstable, may change in future releases.
-[[nodiscard]] ICETEA_API std::string transliterate(std::string_view src,
-                                                    std::string_view transform_id);
+[[nodiscard]] ICETEA_API std::string transliterate(std::string_view src, std::string_view transform_id);
 
-}  // namespace icetea
+} // namespace icetea

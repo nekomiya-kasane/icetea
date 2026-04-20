@@ -6,15 +6,15 @@
 /// Provides plural rules, number/date/time/list/currency/relative-time formatting
 /// via the ICU4X C FFI. Locale can be changed at runtime.
 
+#include "icetea/exports.h"
+#include "icetea/types.h"
+
 #include <cstdint>
 #include <memory>
 #include <span>
 #include <string>
 #include <string_view>
 #include <utility>
-
-#include "icetea/exports.h"
-#include "icetea/types.h"
 
 namespace icetea {
 
@@ -27,20 +27,20 @@ inline constexpr size_t max_locale_length = 35;
 /// Not thread-safe for mutation (set_locale); read operations are safe if the
 /// locale is not being changed concurrently.
 class ICETEA_API icu4x_bridge {
-public:
+  public:
     icu4x_bridge() = default;
     ~icu4x_bridge();
 
-    icu4x_bridge(icu4x_bridge&& other) noexcept;
-    icu4x_bridge& operator=(icu4x_bridge&& other) noexcept;
+    icu4x_bridge(icu4x_bridge &&other) noexcept;
+    icu4x_bridge &operator=(icu4x_bridge &&other) noexcept;
 
-    icu4x_bridge(const icu4x_bridge&) = delete;
-    icu4x_bridge& operator=(const icu4x_bridge&) = delete;
+    icu4x_bridge(const icu4x_bridge &) = delete;
+    icu4x_bridge &operator=(const icu4x_bridge &) = delete;
 
     // ── Nested type aliases (for backward compatibility) ─────────────────
 
-    using date_style   = icetea::date_style;
-    using list_type    = icetea::list_type;
+    using date_style = icetea::date_style;
+    using list_type = icetea::list_type;
     using reltime_unit = icetea::reltime_unit;
 
     // ── Locale management ────────────────────────────────────────────────
@@ -71,44 +71,41 @@ public:
 
     /// Format a number using the locale's decimal formatter.
     /// Appends the formatted result to `out`.
-    void format_number(std::string& out, double n, int fraction_digits = -1) const;
+    void format_number(std::string &out, double n, int fraction_digits = -1) const;
 
     // ── Date/Time formatting ─────────────────────────────────────────────
 
     /// Format a date. Appends to `out`.
-    void format_date(std::string& out, int year, int month, int day,
-                     date_style style = date_style::medium_fmt) const;
+    void format_date(std::string &out, int year, int month, int day, date_style style = date_style::medium_fmt) const;
 
     /// Format a time. Appends to `out`.
-    void format_time(std::string& out, int hour, int minute, int second) const;
+    void format_time(std::string &out, int hour, int minute, int second) const;
 
     // ── List formatting ──────────────────────────────────────────────────
 
     /// Format a list of strings. Appends to `out`.
-    void format_list(std::string& out,
-                     std::span<const std::string_view> items,
+    void format_list(std::string &out, std::span<const std::string_view> items,
                      list_type type = list_type::conjunction) const;
 
     // ── Currency formatting ──────────────────────────────────────────────
 
     /// Format a currency amount. Appends to `out`.
-    void format_currency(std::string& out, double amount,
-                         std::string_view currency_code) const;
+    void format_currency(std::string &out, double amount, std::string_view currency_code) const;
 
     // ── Relative time formatting ─────────────────────────────────────────
 
     /// Format a relative time value. Appends to `out`.
-    void format_reltime(std::string& out, double value, reltime_unit unit) const;
+    void format_reltime(std::string &out, double value, reltime_unit unit) const;
 
-private:
+  private:
     /// @brief Ensure the ICU4X bridge is initialized (lazy creation on first use).
     [[nodiscard]] auto ensure_initialized() const -> result<void>;
 
     struct opaque_deleter {
-        void operator()(void* p) const noexcept;
+        void operator()(void *p) const noexcept;
     };
     mutable std::unique_ptr<void, opaque_deleter> handle_;
-    mutable std::string locale_tag_;  // stored for deferred bridge creation
+    mutable std::string locale_tag_; // stored for deferred bridge creation
 };
 
-}  // namespace icetea
+} // namespace icetea

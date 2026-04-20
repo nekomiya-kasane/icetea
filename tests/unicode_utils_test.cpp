@@ -1,10 +1,9 @@
-#include <gtest/gtest.h>
+#include "icetea/unicode_utils.h"
 
+#include <gtest/gtest.h>
 #include <string>
 #include <string_view>
 #include <vector>
-
-#include "icetea/unicode_utils.h"
 
 using namespace icetea;
 
@@ -37,8 +36,7 @@ TEST(CaseMapping, UppercaseEnglish) {
 TEST(CaseMapping, UppercaseGerman) {
     // German ß → SS (traditional uppercasing rule)
     auto result = uppercase("straße", "de");
-    EXPECT_TRUE(result == "STRASSE" || result == "STRAẞE")
-        << "Got: " << result;
+    EXPECT_TRUE(result == "STRASSE" || result == "STRAẞE") << "Got: " << result;
 }
 
 TEST(CaseMapping, UppercaseTurkish) {
@@ -97,22 +95,22 @@ TEST(CaseMapping, MixedScripts) {
 TEST(Normalization, NFCCompose) {
     // é can be represented as U+00E9 (precomposed) or U+0065 U+0301 (decomposed)
     // NFD: e + combining acute accent
-    std::string decomposed = "e\xCC\x81";  // U+0065 + U+0301
-    std::string composed = "\xC3\xA9";      // U+00E9
+    std::string decomposed = "e\xCC\x81"; // U+0065 + U+0301
+    std::string composed = "\xC3\xA9";    // U+00E9
     auto result = normalize(decomposed, normalization_form::nfc);
     EXPECT_EQ(result, composed);
 }
 
 TEST(Normalization, NFDDecompose) {
-    std::string composed = "\xC3\xA9";      // U+00E9
-    std::string decomposed = "e\xCC\x81";  // U+0065 + U+0301
+    std::string composed = "\xC3\xA9";    // U+00E9
+    std::string decomposed = "e\xCC\x81"; // U+0065 + U+0301
     auto result = normalize(composed, normalization_form::nfd);
     EXPECT_EQ(result, decomposed);
 }
 
 TEST(Normalization, NFKCCompatibility) {
     // ﬁ (U+FB01, ligature) → fi under NFKC
-    std::string ligature = "\xEF\xAC\x81";  // U+FB01
+    std::string ligature = "\xEF\xAC\x81"; // U+FB01
     auto result = normalize(ligature, normalization_form::nfkc);
     EXPECT_EQ(result, "fi");
 }
@@ -125,12 +123,12 @@ TEST(Normalization, NFKDCompatibility) {
 }
 
 TEST(Normalization, IsNormalizedNFC) {
-    std::string composed = "\xC3\xA9";  // U+00E9
+    std::string composed = "\xC3\xA9"; // U+00E9
     EXPECT_TRUE(is_normalized(composed, normalization_form::nfc));
 }
 
 TEST(Normalization, IsNotNormalizedNFC) {
-    std::string decomposed = "e\xCC\x81";  // U+0065 + U+0301
+    std::string decomposed = "e\xCC\x81"; // U+0065 + U+0301
     EXPECT_FALSE(is_normalized(decomposed, normalization_form::nfc));
 }
 
@@ -148,8 +146,8 @@ TEST(Normalization, EmptyString) {
 
 TEST(Normalization, HangulComposition) {
     // Hangul syllable 가 = ᄀ + ᅡ (Jamo L + V)
-    std::string jamo = "\xE1\x84\x80\xE1\x85\xA1";  // U+1100 + U+1161
-    std::string syllable = "\xEA\xB0\x80";            // U+AC00
+    std::string jamo = "\xE1\x84\x80\xE1\x85\xA1"; // U+1100 + U+1161
+    std::string syllable = "\xEA\xB0\x80";         // U+AC00
     auto result = normalize(jamo, normalization_form::nfc);
     EXPECT_EQ(result, syllable);
 }
@@ -219,7 +217,7 @@ TEST(Segmentation, GraphemeASCII) {
 TEST(Segmentation, GraphemeEmoji) {
     // Family emoji: composed of multiple code points, counts as 1 grapheme
     // Simple test: flag emoji 🇺🇸 = U+1F1FA U+1F1F8 (2 code points, 1 grapheme)
-    std::string flag = "\xF0\x9F\x87\xBA\xF0\x9F\x87\xB8";  // 🇺🇸
+    std::string flag = "\xF0\x9F\x87\xBA\xF0\x9F\x87\xB8"; // 🇺🇸
     auto breaks = segment(flag, segmentation_type::grapheme);
     // Should have 1 grapheme cluster break at end of the flag
     EXPECT_GE(breaks.size(), 1u);
@@ -257,7 +255,7 @@ TEST(Segmentation, SingleChar) {
 
 TEST(Segmentation, GraphemeCombining) {
     // e + combining acute = 1 grapheme cluster (3 bytes in UTF-8)
-    std::string text = "e\xCC\x81";  // U+0065 + U+0301
+    std::string text = "e\xCC\x81"; // U+0065 + U+0301
     auto breaks = segment(text, segmentation_type::grapheme);
     // Segmenter may include start (0) and/or end (3) sentinel breaks.
     // The key invariant: only 1 grapheme cluster, so consecutive breaks
@@ -289,7 +287,7 @@ TEST(Collation, CaseSensitiveTertiary) {
 
 TEST(Collation, AccentInsensitivePrimary) {
     // Primary: accent-insensitive — é == e
-    std::string e_acute = "\xC3\xA9";  // é
+    std::string e_acute = "\xC3\xA9"; // é
     EXPECT_EQ(collation_compare(e_acute, "e", "en", collation_strength::primary), 0);
 }
 
@@ -342,7 +340,7 @@ TEST(Transliteration, SimplifiedToTraditional) {
     auto result = transliterate("国", "und-Hant-t-und-hans");
     // May return 國 (traditional) or empty if unsupported
     if (!result.empty()) {
-        EXPECT_NE(result, "国");  // should differ from simplified
+        EXPECT_NE(result, "国"); // should differ from simplified
     }
 }
 
@@ -371,8 +369,8 @@ TEST(Transliteration, InvalidTransformId) {
 
 TEST(CaseMapping, MultiLocaleRoundtrip) {
     // For most Latin-script locales, lowercase(uppercase(s)) ≈ lowercase(s)
-    const char* locales[] = {"en", "fr", "de", "es", "it", "pt", "pl", "nl"};
-    const char* text = "hello world";
+    const char *locales[] = {"en", "fr", "de", "es", "it", "pt", "pl", "nl"};
+    const char *text = "hello world";
     for (auto loc : locales) {
         auto upper = uppercase(text, loc);
         EXPECT_FALSE(upper.empty()) << "locale=" << loc;
