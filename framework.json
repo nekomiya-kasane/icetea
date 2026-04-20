@@ -1,0 +1,6 @@
+{
+  "name": "icetea",
+  "type": "custom",
+  "version": "0.1.0",
+  "description": "ICU4X C++ wrapper — plural rules, locale-aware formatting, Unicode properties (shared)"
+}
