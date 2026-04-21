@@ -16,7 +16,9 @@ namespace {
 template <typename Fn> std::string ffi_string_call(Fn &&fn) {
     std::array<char, 512> buf{};
     int written = fn(buf.data(), static_cast<int>(buf.size()));
-    if (written < 0) return {};
+    if (written < 0) {
+        return {};
+    }
     if (written >= static_cast<int>(buf.size())) {
         std::string big(static_cast<size_t>(written) + 1, '\0');
         fn(big.data(), static_cast<int>(big.size()));
@@ -79,7 +81,9 @@ bool code_point_has_property(char32_t cp, unicode_property prop) {
 
 std::vector<size_t> segment(std::string_view src, segmentation_type type) {
     auto *handle = icu4x_segment(src.data(), static_cast<int>(src.size()), static_cast<int>(type));
-    if (!handle) return {};
+    if (!handle) {
+        return {};
+    }
 
     int count = icu4x_break_indices_count(handle);
     std::vector<size_t> result;

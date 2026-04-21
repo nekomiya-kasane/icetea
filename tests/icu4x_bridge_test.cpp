@@ -642,7 +642,9 @@ TEST(MultiLocale, FormatDateAllStyles) {
     for (const char *loc : {"en", "de", "fr", "ja", "zh", "ru", "ar", "pl", "he", "tr"}) {
         icu4x_bridge bridge;
         auto r = bridge.set_locale(loc, false);
-        if (!r.has_value()) continue;
+        if (!r.has_value()) {
+            continue;
+        }
 
         for (auto style : {date_style::short_fmt, date_style::medium_fmt, date_style::long_fmt}) {
             std::string out;
@@ -677,7 +679,9 @@ TEST(MultiLocale, FormatTimeAllLocales) {
     for (const char *loc : {"en", "de", "fr", "ja", "zh", "ru", "ar", "pl", "he", "tr"}) {
         icu4x_bridge bridge;
         auto r = bridge.set_locale(loc, false);
-        if (!r.has_value()) continue;
+        if (!r.has_value()) {
+            continue;
+        }
 
         std::string out;
         bridge.format_time(out, 23, 59, 59);
@@ -690,7 +694,9 @@ TEST(MultiLocale, FormatTimeMidnight) {
     for (const char *loc : {"en", "de", "ja", "ar"}) {
         icu4x_bridge bridge;
         auto r = bridge.set_locale(loc, false);
-        if (!r.has_value()) continue;
+        if (!r.has_value()) {
+            continue;
+        }
 
         std::string out;
         bridge.format_time(out, 0, 0, 0);
@@ -748,7 +754,9 @@ TEST(MultiLocale, FormatListDisjunction) {
     for (const char *loc : {"en", "de", "fr", "ja", "zh", "ru"}) {
         icu4x_bridge bridge;
         auto r = bridge.set_locale(loc, false);
-        if (!r.has_value()) continue;
+        if (!r.has_value()) {
+            continue;
+        }
 
         std::string out;
         std::vector<std::string_view> items = {"X", "Y", "Z"};
@@ -763,7 +771,9 @@ TEST(MultiLocale, FormatListUnit) {
     for (const char *loc : {"en", "de", "fr", "ja"}) {
         icu4x_bridge bridge;
         auto r = bridge.set_locale(loc, false);
-        if (!r.has_value()) continue;
+        if (!r.has_value()) {
+            continue;
+        }
 
         std::string out;
         std::vector<std::string_view> items = {"3 kg", "200 g"};
@@ -777,7 +787,9 @@ TEST(MultiLocale, FormatListSingleItem) {
     for (const char *loc : {"en", "de", "fr", "ja", "zh", "ru", "ar"}) {
         icu4x_bridge bridge;
         auto r = bridge.set_locale(loc, false);
-        if (!r.has_value()) continue;
+        if (!r.has_value()) {
+            continue;
+        }
 
         std::string out;
         std::vector<std::string_view> items = {"solo"};
@@ -791,7 +803,9 @@ TEST(MultiLocale, FormatListTwoItems) {
     for (const char *loc : {"en", "de", "fr", "ru"}) {
         icu4x_bridge bridge;
         auto r = bridge.set_locale(loc, false);
-        if (!r.has_value()) continue;
+        if (!r.has_value()) {
+            continue;
+        }
 
         std::string out;
         std::vector<std::string_view> items = {"alpha", "beta"};
@@ -867,7 +881,9 @@ TEST(MultiLocale, FormatCurrencyAllLocales) {
     for (auto &c : cases) {
         icu4x_bridge bridge;
         auto r = bridge.set_locale(c.loc, false);
-        if (!r.has_value()) continue;
+        if (!r.has_value()) {
+            continue;
+        }
 
         std::string out;
         bridge.format_currency(out, c.amt, c.cur);
@@ -935,7 +951,9 @@ TEST(MultiLocale, FormatReltimeAllUnitsAllLocales) {
     for (const char *loc : locales) {
         icu4x_bridge bridge;
         auto r = bridge.set_locale(loc, false);
-        if (!r.has_value()) continue;
+        if (!r.has_value()) {
+            continue;
+        }
 
         for (auto unit : units) {
             for (double val : {-5.0, -1.0, 0.0, 1.0, 5.0}) {
@@ -1084,7 +1102,9 @@ TEST(EdgeCase, SetLocaleMultipleTimes) {
     for (const char *loc : {"en", "de", "fr", "ja", "zh", "ru", "ar", "pl", "he", "tr",
                             "en", "de", "fr", "ja", "zh", "ru", "ar", "pl", "he", "tr"}) {
         auto r = bridge.set_locale(loc, false);
-        if (!r.has_value()) continue;
+        if (!r.has_value()) {
+            continue;
+        }
         EXPECT_EQ(bridge.current_locale(), loc);
 
         std::string out;

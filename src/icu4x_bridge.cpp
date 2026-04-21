@@ -34,7 +34,9 @@ auto icu4x_bridge::set_locale(std::string_view locale, bool lazy) -> result<void
 }
 
 auto icu4x_bridge::ensure_initialized() const -> result<void> {
-    if (handle_) return {}; // already created
+    if (handle_) {
+        return {}; // already created
+    }
     if (locale_tag_.empty()) {
         return std::unexpected(error{error_code::invalid_argument, "ICU4X: no locale set"});
     }
@@ -52,7 +54,9 @@ auto icu4x_bridge::current_locale() const -> std::string {
         std::array<char, 64> buf{};
         auto n =
             icu4x_get_locale(static_cast<const Icu4xBridge *>(handle_.get()), buf.data(), static_cast<int>(buf.size()));
-        if (n > 0) return std::string(buf.data(), static_cast<size_t>(n));
+        if (n > 0) {
+            return std::string(buf.data(), static_cast<size_t>(n));
+        }
     }
     return locale_tag_; // return stored tag even before bridge creation
 }
@@ -62,16 +66,24 @@ auto icu4x_bridge::is_initialized() const noexcept -> bool {
 }
 
 auto icu4x_bridge::cardinal_category(double n) const -> plural_category {
-    if (auto r = ensure_initialized(); !r) return plural_category::other;
+    if (auto r = ensure_initialized(); !r) {
+        return plural_category::other;
+    }
     auto cat = icu4x_cardinal_category(static_cast<const Icu4xBridge *>(handle_.get()), n);
-    if (cat < 0 || cat > 5) return plural_category::other;
+    if (cat < 0 || cat > 5) {
+        return plural_category::other;
+    }
     return static_cast<plural_category>(cat);
 }
 
 auto icu4x_bridge::ordinal_category(double n) const -> plural_category {
-    if (auto r = ensure_initialized(); !r) return plural_category::other;
+    if (auto r = ensure_initialized(); !r) {
+        return plural_category::other;
+    }
     auto cat = icu4x_ordinal_category(static_cast<const Icu4xBridge *>(handle_.get()), n);
-    if (cat < 0 || cat > 5) return plural_category::other;
+    if (cat < 0 || cat > 5) {
+        return plural_category::other;
+    }
     return static_cast<plural_category>(cat);
 }
 
@@ -151,12 +163,16 @@ void icu4x_bridge::format_time(std::string &out, int hour, int minute, int secon
 // ═══════════════════════════════════════════════════════════════════════
 
 void icu4x_bridge::format_list(std::string &out, std::span<const std::string_view> items, list_type type) const {
-    if (items.empty()) return;
+    if (items.empty()) {
+        return;
+    }
 
     if (!handle_) {
         // Fallback: comma-separated
         for (size_t i = 0; i < items.size(); ++i) {
-            if (i > 0) out.append(", ");
+            if (i > 0) {
+                out.append(", ");
+            }
             out.append(items[i]);
         }
         return;
@@ -182,7 +198,9 @@ void icu4x_bridge::format_list(std::string &out, std::span<const std::string_vie
     if (written < 0) {
         // Fallback
         for (size_t i = 0; i < items.size(); ++i) {
-            if (i > 0) out.append(", ");
+            if (i > 0) {
+                out.append(", ");
+            }
             out.append(items[i]);
         }
         return;
@@ -227,9 +245,13 @@ void icu4x_bridge::format_reltime(std::string &out, double value, reltime_unit u
 // ═══════════════════════════════════════════════════════════════════════
 
 auto icu4x_bridge::cardinal_range(double start, double end) const -> plural_category {
-    if (auto r = ensure_initialized(); !r) return plural_category::other;
+    if (auto r = ensure_initialized(); !r) {
+        return plural_category::other;
+    }
     auto cat = icu4x_cardinal_range(static_cast<const Icu4xBridge *>(handle_.get()), start, end);
-    if (cat < 0 || cat > 5) return plural_category::other;
+    if (cat < 0 || cat > 5) {
+        return plural_category::other;
+    }
     return static_cast<plural_category>(cat);
 }
 
