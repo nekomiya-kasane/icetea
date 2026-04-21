@@ -9,7 +9,7 @@
 
 namespace icetea {
 
-/// Return the library version string.
-[[nodiscard]] ICETEA_API const char *version() noexcept;
+    /// Return the library version string.
+    [[nodiscard]] ICETEA_API const char *version() noexcept;
 
 } // namespace icetea
